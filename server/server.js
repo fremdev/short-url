@@ -23,19 +23,27 @@ app.get('/new/:url(*)', (req, res) => {
       }
       console.log('Connected to MongoDB server');
 
-      const newLink = {
-        url: longUrl,
-        short: shortUrl
-      };
-
-      db.collection('Links').insertOne(newLink).then((result) => {
-        console.log('Link was successfully added');
-        res.send(shortUrl);
+      db.collection('Links').findOne({url: longUrl}).then((doc) => {
+        if(doc) {
+          res.send({message: `Url already in the database. Short is: ${doc.short}`});
+          db.close();
+        } else {
+          const newLink = {
+            url: longUrl,
+            short: shortUrl
+          };
+          db.collection('Links').insertOne(newLink).then((result) => {
+            console.log('Link was successfully added');
+            res.send(shortUrl);
+            db.close();
+          }, (err) => {
+            console.log('Unable to insert link', err);
+          });
+        }
       }, (err) => {
-        console.log('Unable to insert link');
+        console.log('Unable to fetch data');
       });
 
-      db.close();
     });
   } else {
     res.send({error: 'Wrong url format, make sure you have a valid protocol and real site.'});
