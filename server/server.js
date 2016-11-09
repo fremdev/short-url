@@ -23,18 +23,18 @@ app.get('/new/:url(*)', (req, res) => {
       }
       console.log('Connected to MongoDB server');
 
-      db.collection('Links').findOne({url: longUrl}).then((doc) => {
+      db.collection('Links').findOne({original: longUrl}).then((doc) => {
         if(doc) {
-          res.send({message: 'Url already in the database.', short: doc.short});
+          res.send({original: doc.original, short: doc.short});
           db.close();
         } else {
           const newLink = {
-            url: longUrl,
+            original: longUrl,
             short: shortUrl
           };
-          db.collection('Links').insertOne(newLink).then((result) => {
+          db.collection('Links').insertOne(newLink).then((doc) => {
             console.log('Link was successfully added');
-            res.send(shortUrl);
+            res.send({original: newLink.original, short: newLink.short});
             db.close();
           }, (err) => {
             console.log('Unable to insert link', err);
@@ -61,7 +61,7 @@ app.get('/:short', (req, res) => {
 
     db.collection('Links').findOne({short: shortUrl}).then((doc) => {
       if(doc) {
-        res.redirect(doc.url);
+        res.redirect(doc.original);
       } else {
         res.send({error: 'This url is not on the database.'});
       }
