@@ -14,7 +14,7 @@ app.use(express.static(publicPath));
 app.get('/new/:url(*)', (req, res) => {
   const longUrl = req.params.url;
 
-  if(validator.isURL(longUrl)) {
+  if(validator.isURL(longUrl, {require_protocol: true})) {
     const shortUrl = shortid.generate();
 
     MongoClient.connect(mongoUri, (err, db) => {
@@ -25,7 +25,7 @@ app.get('/new/:url(*)', (req, res) => {
 
       db.collection('Links').findOne({url: longUrl}).then((doc) => {
         if(doc) {
-          res.send({message: `Url already in the database. Short is: ${doc.short}`});
+          res.send({message: 'Url already in the database.', short: doc.short});
           db.close();
         } else {
           const newLink = {
