@@ -16,8 +16,8 @@ https://short-url-js.herokuapp.com/new/https://www.google.com
 ```
 {
 original: "https://google.com",
-short: "H1S480g-x"
+short: "rkfnK0ebx"
 }
 ```
 ### Redirect to original using short link:
-https://short-url-js.herokuapp.com/H1S480g-x
+https://short-url-js.herokuapp.com/rkfnK0ebx
